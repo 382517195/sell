@@ -12,3 +12,5 @@ server:
 wechat:
   mpAppId: wxfa2442ce2335c58d
   mpAppSecret: 78c042ae71d98468441d67bde7397ec0
+  token:
+  aesKey:

@@ -18,4 +18,14 @@ public class WechatAccountConfig {
     private String mpAppId;
 
     private String mpAppSecret;
+
+    /**
+     * 设置微信公众号的token
+     */
+    private String token;
+
+    /**
+     * 设置微信公众号的EncodingAESKey
+     */
+    private String aesKey;
 }
