@@ -95,7 +95,7 @@ public class WechatController {
                     .toEncryptedXml(this.wxMpService.getWxMpConfigStorage());
         }
 
-        log.debug("\n组装回复信息：{}", out);
+        log.info("\n组装回复信息：{}", out);
 
         return out;
     }

@@ -1,8 +1,10 @@
 package com.dcn.sell.handler;
 
 
+import com.dcn.sell.builder.ImageBuilder;
 import com.dcn.sell.builder.TextBuilder;
 import com.dcn.sell.utils.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -19,6 +21,7 @@ import static me.chanjar.weixin.common.api.WxConsts.XmlMsgType;
  * @author Binary Wang(https://github.com/binarywang)
  */
 @Component
+@Slf4j
 public class MsgHandler extends AbstractHandler {
 
   @Override
@@ -44,6 +47,10 @@ public class MsgHandler extends AbstractHandler {
     }
 
     //TODO 组装回复消息
+    log.info("消息类型为："+wxMessage.getMsgType());
+    if("image".equals(wxMessage.getMsgType())){
+      return new ImageBuilder().build(wxMessage.getMediaId(),wxMessage,weixinService);
+    }
     String content = "收到信息内容：" + JsonUtil.toJsonWeixin(wxMessage);
 
     return new TextBuilder().build(content, wxMessage, weixinService);
