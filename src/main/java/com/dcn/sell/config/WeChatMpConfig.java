@@ -6,22 +6,24 @@ import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.constant.WxMpEventConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @Description ${DESCRIPTION}
  * @Author dengchangneng
  * @Create 2018-08-15-10:58
  **/
-@Component
+@Configuration
+@ConditionalOnClass(WxMpService.class)
+@EnableConfigurationProperties(WechatAccountConfig.class)
 public class WeChatMpConfig {
 
-    @Autowired
-    private WechatAccountConfig wechatAccountConfig;
     @Autowired
     protected LogHandler logHandler;
     @Autowired
@@ -30,6 +32,8 @@ public class WeChatMpConfig {
     protected KfSessionHandler kfSessionHandler;
     @Autowired
     protected StoreCheckNotifyHandler storeCheckNotifyHandler;
+    @Autowired
+    private WechatAccountConfig wechatAccountConfig;
     @Autowired
     private LocationHandler locationHandler;
     @Autowired
@@ -42,20 +46,25 @@ public class WeChatMpConfig {
     private SubscribeHandler subscribeHandler;
 
     @Bean
-    public WxMpService wxMpService(){
-        WxMpService wxMpService = new WxMpServiceImpl();
-        wxMpService.setWxMpConfigStorage(wxMpConfigStorage());
-        return wxMpService;
+    @ConditionalOnMissingBean
+    public WxMpConfigStorage configStorage() {
+        WxMpInMemoryConfigStorage configStorage = new WxMpInMemoryConfigStorage();
+        configStorage.setAppId(this.wechatAccountConfig.getMpAppId());
+        configStorage.setSecret(this.wechatAccountConfig.getMpAppSecret());
+        configStorage.setToken(this.wechatAccountConfig.getToken());
+        configStorage.setAesKey(this.wechatAccountConfig.getAesKey());
+        return configStorage;
     }
 
     @Bean
-    public WxMpConfigStorage wxMpConfigStorage(){
-        WxMpInMemoryConfigStorage wxMpConfigStorage = new WxMpInMemoryConfigStorage();
-        wxMpConfigStorage.setAppId(wechatAccountConfig.getMpAppId());
-        wxMpConfigStorage.setSecret(wechatAccountConfig.getMpAppSecret());
-        wxMpConfigStorage.setToken(wechatAccountConfig.getToken());
-        wxMpConfigStorage.setAesKey(wechatAccountConfig.getAesKey());
-        return wxMpConfigStorage;
+    @ConditionalOnMissingBean
+    public WxMpService wxMpService(WxMpConfigStorage configStorage) {
+//        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.okhttp.WxMpServiceImpl();
+//        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.jodd.WxMpServiceImpl();
+//        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.apache.WxMpServiceImpl();
+        WxMpService wxMpService = new me.chanjar.weixin.mp.api.impl.WxMpServiceImpl();
+        wxMpService.setWxMpConfigStorage(configStorage);
+        return wxMpService;
     }
 
     @Bean
