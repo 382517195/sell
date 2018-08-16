@@ -73,6 +73,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.baidu.aip/java-sdk -->
+		<dependency>
+			<groupId>com.baidu.aip</groupId>
+			<artifactId>java-sdk</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
